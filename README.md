@@ -1,7 +1,6 @@
 <h1>Projeto GoRestaurant</h1>
  Exemplo interface admin de restaurante.
 
-<a href="/assets/ResultadoCascavelJulho.pdf" target="__blanc">Relatório exemplo</a>
 ## 🚀 Tecnologias
 
 Esse projeto foi desenvolvido com as seguintes tecnologias:
