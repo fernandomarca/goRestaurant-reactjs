@@ -28,6 +28,9 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // TODO LOAD FOODS
+      const response = await api.get<IFoodPlate[]>('/foods');
+
+      setFoods(response.data);
     }
 
     loadFoods();
@@ -37,32 +40,61 @@ const Dashboard: React.FC = () => {
     food: Omit<IFoodPlate, 'id' | 'available'>,
   ): Promise<void> {
     try {
-      // TODO ADD A NEW FOOD PLATE TO THE API
+      const response = await api.post<IFoodPlate>('/foods', {
+        ...food,
+        available: true,
+      });
+
+      setFoods([...foods, response.data]);
     } catch (err) {
       console.log(err);
     }
-  }
-
-  async function handleUpdateFood(
-    food: Omit<IFoodPlate, 'id' | 'available'>,
-  ): Promise<void> {
-    // TODO UPDATE A FOOD PLATE ON THE API
-  }
-
-  async function handleDeleteFood(id: number): Promise<void> {
-    // TODO DELETE A FOOD PLATE FROM THE API
-  }
-
-  function toggleModal(): void {
-    setModalOpen(!modalOpen);
   }
 
   function toggleEditModal(): void {
     setEditModalOpen(!editModalOpen);
   }
 
+  async function handleUpdateFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
+    try {
+      const response = await api.put<IFoodPlate>(`/foods/${editingFood.id}`, {
+        ...editingFood,
+        ...food,
+      });
+
+      const newFoods = foods.map(foodMap =>
+        foodMap.id === editingFood.id ? { ...response.data } : foodMap,
+      );
+
+      setFoods(newFoods);
+      toggleEditModal();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleDeleteFood(id: number): Promise<void> {
+    try {
+      await api.delete(`/foods/${id}`);
+
+      const newFoods = foods.filter(food => food.id !== id);
+
+      setFoods(newFoods);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function toggleModal(): void {
+    setModalOpen(!modalOpen);
+  }
+
   function handleEditFood(food: IFoodPlate): void {
-    // TODO SET THE CURRENT EDITING FOOD ID IN THE STATE
+    toggleEditModal();
+
+    setEditingFood(food);
   }
 
   return (
